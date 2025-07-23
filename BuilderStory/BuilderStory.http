@@ -1,0 +1,6 @@
+@BuilderStory_HostAddress = http://localhost:5274
+
+GET {{BuilderStory_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
