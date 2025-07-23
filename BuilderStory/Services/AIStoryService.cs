@@ -14,7 +14,6 @@ public class AIStoryService
         _configuration = configuration;
         _logger = logger;
     }
-
     public async Task<string> GenerateStoryFromWordAsync(string word)
     {
         try

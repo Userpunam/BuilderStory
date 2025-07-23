@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace BuilderStory.Controllers;
 
-//build story controller
 
 [ApiController]
 [Route("api/[controller]")]
