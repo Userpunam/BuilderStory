@@ -5,7 +5,7 @@ namespace BuilderStory.Controllers;
 
 
 [ApiController]
-[Route("api/[controller]")]
+[Route("api/story")]
 public class StoryController : ControllerBase
 {
     private readonly IStoryService _storyService;
@@ -17,7 +17,7 @@ public class StoryController : ControllerBase
         _logger = logger;
     }
 
-    [HttpPost("create")]
+    [HttpPost("")]
     public async Task<IActionResult> CreateStory([FromBody] CreateStoryRequestDto dto)
     {
         try
@@ -32,7 +32,7 @@ public class StoryController : ControllerBase
         }
     }
 
-    [HttpGet("paginated")]
+    [HttpGet("")]
     public async Task<IActionResult> GetPaginatedStories([FromQuery] PaginatedStoriesRequestDto dto)
     {
         try
@@ -62,7 +62,7 @@ public class StoryController : ControllerBase
         }
     }
 
-    [HttpPost("{storyId}/upload")]
+    [HttpPost("{storyId}/upload-image")]
     public async Task<IActionResult> UploadImage([FromRoute] Guid storyId, IFormFile file)
     {
         try

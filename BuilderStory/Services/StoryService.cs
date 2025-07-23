@@ -14,9 +14,9 @@ public class StoryService : IStoryService
     private readonly AIStoryService _aiStoryService;
     private readonly ILogger<StoryService> _logger;
 
-    public StoryService(StoryDbContext context, IMapper mapper, AIStoryService aiStoryService, ILogger<StoryService> logger)
+    public StoryService(StoryDbContext Dbcontext, IMapper mapper, AIStoryService aiStoryService, ILogger<StoryService> logger)
     {
-        _context = context;
+        _context = Dbcontext;
         _mapper = mapper;
         _aiStoryService = aiStoryService;
         _logger = logger;
@@ -87,15 +87,30 @@ public class StoryService : IStoryService
     {
         try
         {
-            int count = storyText.Split(' ', StringSplitOptions.RemoveEmptyEntries)
-                                 .Count(w => w.Equals(word, StringComparison.OrdinalIgnoreCase));
+            if (string.IsNullOrWhiteSpace(word) || string.IsNullOrWhiteSpace(storyText))
+            {
+                _logger.LogWarning("Word or StoryText is empty");
+                return new CountWordResponseDto
+                {
+                    Word = word,
+                    StoryText = storyText,
+                    Count = 0
+                };
+            }
+
+            var words = storyText
+                .Split(new[] { ' ', '\t', '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries)
+                .Select(w => w.Trim().Trim(',', '.', '!', '?', ';', ':', '\'', '"'));
+
+            int count = words.Count(w => w.Equals(word, StringComparison.OrdinalIgnoreCase));
 
             _logger.LogInformation("Counted {Count} occurrences of word '{Word}'", count, word);
 
             return new CountWordResponseDto
             {
                 Word = word,
-                StoryText = storyText
+                StoryText = storyText,
+                Count = count
             };
         }
         catch (Exception ex)
@@ -104,6 +119,7 @@ public class StoryService : IStoryService
             throw;
         }
     }
+
 
     public async Task<UploadImageResponseDto> uploadInageAsync(Guid storyId, IFormFile file)
     {
