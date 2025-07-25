@@ -1,7 +1,7 @@
         #Word Story Builder API
 The Word Story Builder API is a .NET Core Web API project that builds stories using a single word input. It uses AI to generate stories and supports storing, retrieving, counting words, and uploading images to stories.
 
- Features Of StoryBuildetAPI Project
+ #Features Of StoryBuildetAPI Project
  
 -Create Story from Word using AI
 
@@ -19,7 +19,7 @@ The Word Story Builder API is a .NET Core Web API project that builds stories us
 
 -Swagger UI for API testing
 
-Technologies Used In Project 
+#Technologies Used In Project 
 -ASP.NET Core Web API (.NET 7/8)
 
 -Entity Framework Core
@@ -36,7 +36,7 @@ Technologies Used In Project
 
 -C#
 
- API Endpoints
+ #API Endpoints
 Method	Endpoint	Description For project-
 
 POST	/api/story/create	  -Create a story from a word
