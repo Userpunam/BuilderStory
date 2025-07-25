@@ -6,7 +6,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
 namespace BuilderStory.Services;
-
 public class StoryService : IStoryService
 {
     private readonly StoryDbContext _context;
@@ -21,7 +20,6 @@ public class StoryService : IStoryService
         _aiStoryService = aiStoryService;
         _logger = logger;
     }
-
     public async Task<Story> CreateStoryAsync(string word)
     {
         try
@@ -54,7 +52,6 @@ public class StoryService : IStoryService
             throw;
         }
     }
-
     public async Task<PaginatedStoriesResponseDto<Story>> GetPaginatedStoriesAsync(int pageNumber, int pageSize)
     {
         try
@@ -82,51 +79,64 @@ public class StoryService : IStoryService
             throw;
         }
     }
-
-    public async Task<CountWordResponseDto> CountWordInStoryAsync(string word, string storyText)
+    public async Task<CountWordResponseDto> CountWordInStoryAsync(string word, Guid storyId)
     {
         try
         {
-            if (string.IsNullOrWhiteSpace(word) || string.IsNullOrWhiteSpace(storyText))
+            if (string.IsNullOrWhiteSpace(word))
             {
-                _logger.LogWarning("Word or StoryText is empty");
+                _logger.LogWarning("The provided word is empty");
                 return new CountWordResponseDto
                 {
                     Word = word,
-                    StoryText = storyText,
+                    StoryContent = string.Empty,
                     Count = 0
                 };
             }
 
+            var story = await _context.Stories.FindAsync(storyId);
+
+            if (story == null)
+            {
+                _logger.LogWarning("Story not found with ID: {StoryId}", storyId);
+                return new CountWordResponseDto
+                {
+                    Word = word,
+                    StoryContent = string.Empty,
+                    Count = 0
+                };
+            }
+
+            var storyText = story.Content;
+
             var words = storyText
                 .Split(new[] { ' ', '\t', '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries)
-                .Select(w => w.Trim().Trim(',', '.', '!', '?', ';', ':', '\'', '"'));
+                .Select(w => w.Trim(',', '.', '!', '?', ';', ':', '\'', '"'));
 
             int count = words.Count(w => w.Equals(word, StringComparison.OrdinalIgnoreCase));
 
-            _logger.LogInformation("Counted {Count} occurrences of word '{Word}'", count, word);
+
+            _logger.LogInformation("Found {Count} occurrences of the word '{Word}'", count, word);
 
             return new CountWordResponseDto
             {
                 Word = word,
-                StoryText = storyText,
+                StoryContent = storyText,
                 Count = count
             };
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error while counting word '{Word}' in story text", word);
+            _logger.LogError(ex, "An error occurred while counting word '{Word}' in story with ID '{StoryId}'", word, storyId);
             throw;
         }
     }
-
-
-    public async Task<UploadImageResponseDto> uploadInageAsync(Guid storyId, IFormFile file)
+    public async Task<UploadImageResponseDto> uploadImageAsync(Guid storyId, IFormFile file)
     {
         try
         {
-            var story = await _context.Stories.Include(s => s.Images).FirstOrDefaultAsync(s => s.Id == storyId);
-            if (story == null)
+            var storyExists = await _context.Stories.AnyAsync(s => s.Id == storyId);
+            if (!storyExists)
             {
                 _logger.LogWarning("Story not found for ID: {StoryId}", storyId);
                 throw new Exception("Story not found");
@@ -141,10 +151,10 @@ public class StoryService : IStoryService
                 UploadedAt = DateTime.UtcNow
             };
 
-            story.Images.Add(storyImage);
+            _context.StoryImages.Add(storyImage);
             await _context.SaveChangesAsync();
 
-            _logger.LogInformation("Image uploaded for Story ID: {StoryId}, File: {FileName}", storyId, file.FileName);
+            _logger.LogInformation("Image uploaded successfully for Story ID: {StoryId}", storyId);
 
             return new UploadImageResponseDto
             {

@@ -1,4 +1,5 @@
-﻿using BuilderStory.Contract;
+﻿using BuilderStory.Configurations;
+using BuilderStory.Contract;
 using BuilderStory.Data;
 using BuilderStory.MapperProfile;
 using BuilderStory.Services;
@@ -27,6 +28,8 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddDbContext<StoryDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+builder.Services.Configure<OpenRouterSettings>(builder.Configuration.GetSection("OpenRouter"));
 
 builder.Services.AddHttpClient(); 
 builder.Services.AddScoped<AIStoryService>();

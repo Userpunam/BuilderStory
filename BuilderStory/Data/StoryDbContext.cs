@@ -17,7 +17,7 @@ public class StoryDbContext : DbContext
             .HasMany(s => s.Images)
             .WithOne(i => i.Story)
             .HasForeignKey(i => i.StoryId);
-
+      
         modelBuilder.Entity<Story>()
             .HasIndex(s => s.Word)
             .IsUnique();

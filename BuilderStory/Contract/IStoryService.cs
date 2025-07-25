@@ -8,8 +8,8 @@ namespace BuilderStory.Contract
 
         Task<PaginatedStoriesResponseDto<Story>> GetPaginatedStoriesAsync(int pageNumber, int pageSize);
 
-        Task<CountWordResponseDto> CountWordInStoryAsync(string word, string storyText);
+        Task<CountWordResponseDto> CountWordInStoryAsync(string word, Guid storryId);
 
-        Task<UploadImageResponseDto> uploadInageAsync(Guid storyId, IFormFile File);
+        Task<UploadImageResponseDto> uploadImageAsync(Guid storyId, IFormFile File);
     }
 }

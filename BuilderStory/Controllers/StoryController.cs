@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace BuilderStory.Controllers;
 
-
 [ApiController]
 [Route("api/story")]
 public class StoryController : ControllerBase
@@ -52,7 +51,7 @@ public class StoryController : ControllerBase
     {
         try
         {
-            var result = await _storyService.CountWordInStoryAsync(dto.Word, dto.StoryText);
+            var result = await _storyService.CountWordInStoryAsync(dto.Word, dto.StoryId);
             return Ok(result);
         }
         catch (Exception ex)
@@ -67,7 +66,7 @@ public class StoryController : ControllerBase
     {
         try
         {
-            var result = await _storyService.uploadInageAsync(storyId, file);
+            var result = await _storyService.uploadImageAsync(storyId, file);
             return Ok(result);
         }
         catch (Exception ex)
