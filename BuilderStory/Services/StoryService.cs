@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using System.Text.RegularExpressions;
+using AutoMapper;
 using BuilderStory.Contract;
 using BuilderStory.Data;
 using BuilderStory.Domain;
@@ -109,12 +110,7 @@ public class StoryService : IStoryService
 
             var storyText = story.Content;
 
-            var words = storyText
-                .Split(new[] { ' ', '\t', '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries)
-                .Select(w => w.Trim(',', '.', '!', '?', ';', ':', '\'', '"'));
-
-            int count = words.Count(w => w.Equals(word, StringComparison.OrdinalIgnoreCase));
-
+            int count = Regex.Matches(storyText, $@"\b{Regex.Escape(word)}\b", RegexOptions.IgnoreCase).Count;
 
             _logger.LogInformation("Found {Count} occurrences of the word '{Word}'", count, word);
 
