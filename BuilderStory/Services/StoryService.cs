@@ -24,7 +24,7 @@ public class StoryService : IStoryService
     {
         try
         {
-            var existing = await _context.Stories.FirstOrDefaultAsync(x => x.Word == word);
+            var existing = await _context.Stories.FirstOrDefaultAsync(x => EF.Functions.ILike(x.Word, word));
             if (existing != null)
             {
                 _logger.LogInformation("Story already exists for word: {Word}", word);
